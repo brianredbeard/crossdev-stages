@@ -76,8 +76,8 @@ copy_to_root() {
     cp -a $BUILD_DIR/firmware/board/spacemit/k1/target_overlay/lib/firmware/* $root/lib/firmware
     mkdir -p $root/etc/dracut.conf.d
     echo 'install_items+=" /lib/firmware/esos.elf "' > $root/etc/dracut.conf.d/firmware.conf
-    setup_service sshd default
-    setup_service metalog default
+    #setup_service sshd default
+    #setup_service metalog default
     echo "x1:12345:respawn:/sbin/agetty 115200 console linux" >> $root/etc/inittab
     sed -i -e 's/root:x:/root::/' $root/etc/passwd
     echo "PermitRootLogin yes" >> $root/etc/ssh/sshd_config
@@ -96,7 +96,7 @@ copy_to_boot() {
 // Common parameter
 console=ttyS0,115200
 init=/init
-bootdelay=0
+bootdelay=5
 loglevel=8
 
 knl_name=Image.gz.itb

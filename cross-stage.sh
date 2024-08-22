@@ -19,7 +19,7 @@ usage() {
 
 STAGE_DIR=$2
 
-STAGE1_PACKAGES=`grep -v '#' /var/db/repos/gentoo/profiles/default/linux/packages.build`
+STAGE1_PACKAGES=`grep -v '#' /var/db/repos/gentoo/profiles/default/linux/packages.build && echo -e app-editors/vim\napp-eselect/eselect-repository`
 ADDITIONAL_PACKAGES="
   sys-block/parted
   net-wireless/wpa_supplicant
@@ -28,7 +28,8 @@ ADDITIONAL_PACKAGES="
   net-misc/ntp
   dev-vcs/git
 "
-PROFILE=default/linux/riscv/23.0/rv64/lp64d
+PROFILE=default/linux/riscv/23.0/rv64/lp64d/systemd
+#PROFILE=default/linux/riscv/23.0/rv64/lp64d/systemd
 # Until https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115789 is fixed we cannot reliably using vectors
 # OUR_CFLAGS="-O3 -march=rv64gcv_zvl256b -pipe"
 OUR_CFLAGS="-O3 -pipe"
@@ -52,9 +53,9 @@ setup_crossdev() {
     echo -e '>=virtual/libcrypt-2-r1 static-libs\n>=sys-libs/libxcrypt-4.4.36-r3 static-libs\n>=sys-apps/busybox-1.36.1-r3 -pam static' > ${root}/etc/portage/package.use/busybox
     echo 'LDFLAGS="$LDFLAGS --sysroot=$EROOT"' > ${root}/etc/portage/env/override-sysroot
     echo "dev-lang/perl override-sysroot" >${root}/etc/portage/package.env/perl
-    mkdir ${CROSSDEV_ROOT}/bin
+    mkdir -p ${CROSSDEV_ROOT}/bin
     # crossdev starts as split_usr layout
-    merge-usr --root ${CROSSDEV_ROOT}
+    # merge-usr --root ${CROSSDEV_ROOT}
     crossdev riscv64-unknown-linux-gnu
 }
 
@@ -71,9 +72,9 @@ prepare_stage1() {
 }
 
 install_stage1() {
-    ROOT=$1 USE=build riscv64-unknown-linux-gnu-emerge -k -b baselayout
-    ROOT=$1 riscv64-unknown-linux-gnu-emerge -k -b ${STAGE1_PACKAGES}
-    ROOT=$1 USE=build riscv64-unknown-linux-gnu-emerge -k -b portage
+    ROOT=$1 USE=build riscv64-unknown-linux-gnu emerge -k -b baselayout
+    ROOT=$1 riscv64-unknown-linux-gnu emerge -k -b ${STAGE1_PACKAGES}
+    ROOT=$1 USE=build riscv64-unknown-linux-gnu emerge -k -b portage
 }
 
 install_perl() {

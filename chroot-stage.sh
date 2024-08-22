@@ -3,10 +3,10 @@
 gentoo_arch() {
     local os_arch=$1
     case $os_arch in
-        x86_64) ARCH=amd64 FLAVOR=amd64-openrc;;
-        aarch64) ARCH=arm64 FLAVOR=arm64-openrc;;
-        riscv*) ARCH=riscv FLAVOR=rv64_lp64d-openrc;;
-        *) ARCH=$os_arch FLAVOR=$ARCH-openrc;;
+        x86_64) ARCH=amd64 FLAVOR=amd64-systemd;;
+        aarch64) ARCH=arm64 FLAVOR=arm64-systemd;;
+        riscv*) ARCH=riscv FLAVOR=rv64_lp64d-systemd;;
+        *) ARCH=$os_arch FLAVOR=$ARCH-systemd;;
     esac
 # echo "$os_arch => $ARCH"
 }
@@ -35,6 +35,7 @@ run_bwrap() {
         --dev-bind /dev dev \
         --proc /proc \
         --bind /sys sys \
+        --bind /srv /srv \
         --ro-bind /etc/resolv.conf etc/resolv.conf \
         --hostname gentoo \
         --unshare-uts \
